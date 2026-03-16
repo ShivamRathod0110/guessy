@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { Guess } from '@/store/gameStore'

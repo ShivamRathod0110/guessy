@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { useGameStore } from '@/store/gameStore'

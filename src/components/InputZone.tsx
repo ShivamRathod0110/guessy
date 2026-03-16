@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from 'react'
 import { useGameStore } from '@/store/gameStore'
 import { validateGuess, normaliseGuess } from '@/utils/validateGuess'
+import React from 'react'
 
 interface InputZoneProps {
   setFeedback: (msg: string | null) => void

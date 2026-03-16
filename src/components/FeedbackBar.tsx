@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 import { useEffect } from 'react'
 
 interface FeedbackBarProps {
