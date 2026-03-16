@@ -4,7 +4,7 @@ import { validateGuess, normaliseGuess } from '@/utils/validateGuess'
 import React from 'react'
 
 interface InputZoneProps {
-  setFeedback: (msg: string | null) => void
+  setFeedback: (_msg: string | null) => void
 }
 
 export default function InputZone({ setFeedback }: InputZoneProps) {
