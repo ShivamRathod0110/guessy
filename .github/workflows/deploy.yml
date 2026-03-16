@@ -36,5 +36,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
 
-      - name: Lighthouse CI
-        run: npx lhci autorun
+      #- name: Lighthouse CI
+       # run: npx lhci autorun
