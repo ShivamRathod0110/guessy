@@ -1,12 +1,12 @@
 export type RankBand = 'found' | 'close' | 'hot' | 'warm' | 'cold' | 'unknown'
 
-export function getRankBand(rank: number | '>2000' | 'NOT_FOUND'): RankBand {
+export function getRankBand(rank: number | '>5000' | 'NOT_FOUND'): RankBand {
   if (rank === 'NOT_FOUND') return 'unknown'
-  if (rank === '>2000') return 'cold'
+  if (rank === '>5000') return 'cold'
   if (rank === 1) return 'found'
-  if (rank <= 300) return 'close'
-  if (rank <= 800) return 'hot'
-  if (rank <= 1499) return 'warm'
+  if (rank <= 750) return 'close'
+  if (rank <= 2000) return 'hot'
+  if (rank <= 3750) return 'warm'
   return 'cold'
 }
 
