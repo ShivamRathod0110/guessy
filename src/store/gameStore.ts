@@ -8,7 +8,7 @@ export interface Guess {
   timestamp: number
 }
 
-export type GamePhase = 'playing' | 'won'
+export type GamePhase = 'playing' | 'won' | 'given-up'
 export type SortOrder = 'best-first' | 'chronological'
 
 interface GameState {
@@ -19,10 +19,10 @@ interface GameState {
   sortOrder: SortOrder
   similarityData: [string, number][] | null
 
-  // Actions
   initGame: (word: string, data: [string, number][]) => void
   submitGuess: (word: string) => void
   toggleSortOrder: () => void
+  giveUp: () => void
 }
 
 export const useGameStore = create<GameState>((set, get) => ({
@@ -45,10 +45,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     const { secretWord, guesses, similarityData } = get()
     const word = input.trim().toLowerCase()
 
-    // Check duplicate
     if (guesses.some(g => g.word === word)) return
 
-    // Look up rank
     let rank: number | '>5000' | 'NOT_FOUND' = 'NOT_FOUND'
 
     if (word === secretWord) {
@@ -63,14 +61,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     }
 
     const band = getRankBand(rank)
-
-    const guess: Guess = {
-      word,
-      rank,
-      band,
-      timestamp: Date.now(),
-    }
-
+    const guess: Guess = { word, rank, band, timestamp: Date.now() }
     const newGuesses = [...guesses, guess]
     const won = rank === 1
 
@@ -84,4 +75,6 @@ export const useGameStore = create<GameState>((set, get) => ({
   toggleSortOrder: () => set(state => ({
     sortOrder: state.sortOrder === 'best-first' ? 'chronological' : 'best-first',
   })),
+
+  giveUp: () => set({ phase: 'given-up' }),
 }))
