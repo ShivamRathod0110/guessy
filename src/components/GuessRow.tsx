@@ -1,4 +1,4 @@
-import { motion, useMotionValue, useTransform, animate } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { Guess } from '@/store/gameStore'
 import { BAND_COLOURS } from '@/utils/rankBand'
@@ -9,7 +9,7 @@ interface GuessRowProps {
 }
 
 function AnimatedRank({ rank }: { rank: number | '>5000' | 'NOT_FOUND' }) {
-  const [display, setDisplay] = useState('9999')
+  const [display, setDisplay] = useState('5000')
 
   useEffect(() => {
     if (typeof rank !== 'number') {

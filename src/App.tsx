@@ -36,6 +36,8 @@ export default function App() {
       }
 
       initGame(word, data)
+      //console.log('game init - word:', word, 'data length:', data?.length, 'data sample:', data?.[0])
+
       setLoading(false)
     } catch (err) {
       setError('Failed to load game data. Please refresh.')

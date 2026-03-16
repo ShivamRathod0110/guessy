@@ -18,11 +18,13 @@ interface GameState {
   phase: GamePhase
   sortOrder: SortOrder
   similarityData: [string, number][] | null
+  hint: string | null
 
   initGame: (word: string, data: [string, number][]) => void
   submitGuess: (word: string) => void
   toggleSortOrder: () => void
   giveUp: () => void
+  getHint: () => void
 }
 
 export const useGameStore = create<GameState>((set, get) => ({
@@ -32,6 +34,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   phase: 'playing',
   sortOrder: 'best-first',
   similarityData: null,
+  hint: null,
 
   initGame: (word, data) => set({
     secretWord: word,
@@ -39,6 +42,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     guessCount: 0,
     phase: 'playing',
     similarityData: data,
+    hint: null,
   }),
 
   submitGuess: (input) => {
@@ -53,6 +57,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       rank = 1
     } else if (similarityData) {
       const entry = similarityData.find(([w]) => w === word)
+      console.log('word:', word, 'first entry:', similarityData?.[0], 'found:', entry)
       if (entry) {
         rank = entry[1]
       } else {
@@ -77,4 +82,55 @@ export const useGameStore = create<GameState>((set, get) => ({
   })),
 
   giveUp: () => set({ phase: 'given-up' }),
+
+  getHint: () => {
+  const { similarityData, guesses, hint, secretWord } = get()
+  if (!similarityData || hint) return
+  if (guesses.length < 5) return
+
+  const guessedWords = new Set(guesses.map(g => g.word))
+
+  const bestRank = guesses.reduce((best, g) => {
+    if (typeof g.rank !== 'number') return best
+    return g.rank < best ? g.rank : best
+  }, 5000)
+
+  let hintMin = 2
+  let hintMax = 50
+
+  const count = guesses.length
+
+  if (count >= 5 && count <= 10) {
+    hintMin = Math.floor(bestRank * 0.4)
+    hintMax = Math.floor(bestRank * 0.6)
+  } else if (count >= 11 && count <= 20) {
+    hintMin = Math.floor(bestRank * 0.2)
+    hintMax = Math.floor(bestRank * 0.4)
+  } else if (count >= 21 && count <= 40) {
+    hintMin = Math.floor(bestRank * 0.1)
+    hintMax = Math.floor(bestRank * 0.2)
+  } else if (count >= 41) {
+    hintMin = 2
+    hintMax = 50
+  }
+
+  // Ensure valid range
+  if (hintMin < 2) hintMin = 2
+  if (hintMax < hintMin) hintMax = hintMin + 10
+
+  const candidates = similarityData
+    .slice(1)
+    .filter(([word, rank]) =>
+      typeof rank === 'number' &&
+      rank >= hintMin &&
+      rank <= hintMax &&
+      !guessedWords.has(word) &&
+      word !== secretWord
+    )
+
+  if (candidates.length === 0) return
+
+  const hintWord = candidates[Math.floor(Math.random() * candidates.length)]
+  set({ hint: hintWord[0] })
+},
 }))

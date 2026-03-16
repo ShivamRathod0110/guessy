@@ -6,17 +6,30 @@ interface HeaderProps {
 }
 
 export default function Header({ onNewGame, onGiveUp }: HeaderProps) {
-  const { guessCount, phase } = useGameStore()
+  const { guessCount, phase, hint, getHint } = useGameStore()
 
   return (
     <header className="h-14 flex items-center justify-between px-4 border-b border-[#1E2A3A] shrink-0">
       <span className="font-mono text-sm font-bold tracking-widest text-[#00E5B4]">
         GUESSY
       </span>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         <span className="font-mono text-xs text-[#EDF2F7]">
           {guessCount} GUESSES
         </span>
+        {phase === 'playing' && (
+  <button
+    onClick={getHint}
+    disabled={!!hint || guessCount < 5}
+    className="font-mono text-xs text-[#FFB830] border border-[#FFB830] px-2 py-1 hover:bg-[#FFB830] hover:text-[#0A0E1A] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+  >
+    {hint
+      ? `HINT: ${hint.toUpperCase()}`
+      : guessCount < 5
+      ? `HINT (${5 - guessCount})`
+      : 'HINT'}
+  </button>
+)}
         {phase === 'playing' && guessCount > 0 && (
           <button
             onClick={onGiveUp}
