@@ -71,7 +71,7 @@ export default function App() {
     )
   }
 
-  console.log('phase:', phase)
+  //console.log('phase:', phase)
   return (
     <div className="min-h-screen bg-[#0A0E1A] flex justify-center">
       <div className="w-full max-w-[480px] flex flex-col border-x border-[#1E2A3A]">

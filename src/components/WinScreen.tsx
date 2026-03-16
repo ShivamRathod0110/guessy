@@ -116,7 +116,8 @@ export default function WinScreen({ onPlayAgain, givenUp }: WinScreenProps) {
       </motion.h1>
 
       <span className="font-serif text-sm text-[#8A9BB0]">
-        {guessCount} {guessCount === 1 ? 'guess' : 'guesses'} — {getDescriptor(guessCount)}
+        {guessCount} {guessCount === 1 ? 'guess' : 'guesses'}
+        {!givenUp && ` — ${getDescriptor(guessCount)}`}
       </span>
 
       <ProximityBar guesses={guesses} />
