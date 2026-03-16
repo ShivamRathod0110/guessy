@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion'
+import { motion, useMotionValue, useTransform, animate } from 'framer-motion'
+import { useEffect, useState } from 'react'
 import { Guess } from '@/store/gameStore'
 import { BAND_COLOURS } from '@/utils/rankBand'
 
@@ -7,15 +8,37 @@ interface GuessRowProps {
   index: number
 }
 
+function AnimatedRank({ rank }: { rank: number | '>5000' | 'NOT_FOUND' }) {
+  const [display, setDisplay] = useState('9999')
+
+  useEffect(() => {
+    if (typeof rank !== 'number') {
+      setDisplay(rank === '>5000' ? '>5000' : '????')
+      return
+    }
+
+    let start = 5000
+    const end = rank
+    const duration = 600
+    const startTime = performance.now()
+
+    const update = (now: number) => {
+      const elapsed = now - startTime
+      const progress = Math.min(elapsed / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3) // ease-out cubic
+      const current = Math.round(start - (start - end) * eased)
+      setDisplay(String(current).padStart(4, ' '))
+      if (progress < 1) requestAnimationFrame(update)
+    }
+
+    requestAnimationFrame(update)
+  }, [rank])
+
+  return <>{display}</>
+}
+
 export default function GuessRow({ guess, index }: GuessRowProps) {
   const colour = BAND_COLOURS[guess.band]
-
-  const rankDisplay =
-    guess.rank === 'NOT_FOUND'
-      ? '????'
-      : guess.rank === '>5000'
-      ? '>5000'
-      : String(guess.rank).padStart(4, ' ')
 
   const heatWidth =
     typeof guess.rank === 'number'
@@ -44,7 +67,7 @@ export default function GuessRow({ guess, index }: GuessRowProps) {
         className="font-mono text-xs font-bold w-16 text-right pr-3 tabular-nums"
         style={{ color: colour }}
       >
-        {rankDisplay}
+        <AnimatedRank rank={guess.rank} />
       </span>
 
       {/* Word */}
@@ -59,7 +82,7 @@ export default function GuessRow({ guess, index }: GuessRowProps) {
           style={{ backgroundColor: colour }}
           initial={{ width: 0 }}
           animate={{ width: heatWidth }}
-          transition={{ duration: 0.3, ease: 'easeInOut' }}
+          transition={{ duration: 0.3, ease: 'easeInOut', delay: 0.6 }}
         />
       </div>
     </motion.div>
